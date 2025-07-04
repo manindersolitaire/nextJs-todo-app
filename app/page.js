@@ -1,13 +1,28 @@
 "use client"
 import Todo from "@/Components/Todo";
 import { ToastContainer, toast } from 'react-toastify';
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Home() {
   const [formData,setFormData] = useState({
     title :"",
     description :""
   })
+
+  const [todos,setTodos] = useState([])
+
+  const fetchTodos =  async () => {
+    const res = await axios.get('/api')
+    setTodos(res.data.todos)
+  
+  }
+
+  useEffect(()=>{
+    fetchTodos()
+  },[])
+
+
   const onChangeHandler = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -18,11 +33,15 @@ export default function Home() {
     e.preventDefault()
 
     try{
-        
-      toast.success("Todo Added Successfully")
+      const res =  await axios.post('/api',formData)
+      toast.success(res.data.message)
+      setFormData({
+        title : "",
+        description : ""
+      })
     }
     catch(error){
-      console.log(error)
+      toast.error(error)
     }
 
   }
@@ -75,10 +94,10 @@ export default function Home() {
             </tr>
           </thead>
           <tbody>
-           <Todo/>
-           <Todo/>
-           <Todo/>
-           <Todo/>
+            {todos.map((todo,index)=>{
+              return <Todo id={index} key={todo._id} title={todo.title} description = {todo.description} complete={todo.isCompleted}/>
+            })}
+               
           
           </tbody>
         </table>
