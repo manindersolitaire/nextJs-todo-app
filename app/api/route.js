@@ -21,3 +21,23 @@ export async function POST(request){
     })
     return NextResponse.json({message:"Todo Created"})
 }
+
+export async function DELETE(request){
+    
+    const mongoId  = await request.nextUrl.searchParams.get('mongoId')
+
+    await TodoModel.findByIdAndDelete(mongoId)
+    return NextResponse.json({message:"Todo Deleted"})
+}
+
+export async function PUT(request){
+    
+    const mongoId  = await request.nextUrl.searchParams.get('mongoId')
+
+    await TodoModel.findByIdAndUpdate(mongoId,{
+        $set: {
+            isCompleted: true
+        }
+    })
+    return NextResponse.json({message:"Todo Completed"})
+}

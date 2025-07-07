@@ -18,10 +18,29 @@ export default function Home() {
   
   }
 
+
+  const deleteTodo = async (mongoId) => {
+         const res  = await axios.delete('/api',{
+          params: {
+            mongoId : mongoId
+          }
+         })
+         toast.success(res.data.message)
+         fetchTodos();
+  }
   useEffect(()=>{
     fetchTodos()
   },[])
 
+  const completeTodo = async (id) =>{
+     const res = await axios.put('/api',{},{
+      params: {
+        mongoId : id
+      }
+     })
+     toast.success(res.data.message)
+     fetchTodos()
+  }
 
   const onChangeHandler = (e) => {
     const name = e.target.name;
@@ -95,7 +114,7 @@ export default function Home() {
           </thead>
           <tbody>
             {todos.map((todo,index)=>{
-              return <Todo id={index} key={todo._id} title={todo.title} description = {todo.description} complete={todo.isCompleted}/>
+              return <Todo id={index} key={todo._id} title={todo.title} description = {todo.description} complete={todo.isCompleted} mongoId = {todo._id} deleteTodo = {deleteTodo} completeTodo = {completeTodo}/>
             })}
                
           
